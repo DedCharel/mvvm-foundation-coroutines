@@ -11,7 +11,7 @@ class App:Application() {
     /**
      * Place your repositories here, now we have only one repository
      */
-    val model = listOf<Any>(
+    val models = listOf<Any>(
         InMemoryColorsRepository()
     )
 }

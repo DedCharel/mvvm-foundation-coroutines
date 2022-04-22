@@ -10,7 +10,7 @@ typealias ColorListener = (NamedColor) -> Unit
  */
 interface ColorsRepository:Repository {
 
-    val currentColor: NamedColor
+    var currentColor: NamedColor
 
     /**
      * Get the list of all available colors that may be chosen by the user.
