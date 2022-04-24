@@ -1,6 +1,6 @@
-package com.example.simplemvvw.views
+package com.example.foundation.navigatior
 
-import com.example.simplemvvw.views.base.BaseScreen
+import com.example.foundation.views.BaseScreen
 
 /**
  * Navigation for your application

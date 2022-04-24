@@ -1,4 +1,4 @@
-package com.example.simplemvvw.utils
+package com.example.foundation.utils
 
 typealias ResourceAction<T> = (T) -> Unit
 

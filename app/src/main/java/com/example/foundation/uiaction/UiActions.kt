@@ -1,4 +1,4 @@
-package com.example.simplemvvw.views
+package com.example.foundation.uiaction
 
 /**
  * Common actions that can be performed in the view-model

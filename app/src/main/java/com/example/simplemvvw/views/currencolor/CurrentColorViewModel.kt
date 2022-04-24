@@ -6,16 +6,16 @@ import com.example.simplemvvw.R
 import com.example.simplemvvw.model.colors.ColorListener
 import com.example.simplemvvw.model.colors.ColorsRepository
 import com.example.simplemvvw.model.colors.NamedColor
-import com.example.simplemvvw.views.Navigator
-import com.example.simplemvvw.views.UiActions
-import com.example.simplemvvw.views.base.BaseViewModel
+import com.example.foundation.navigatior.Navigator
+import com.example.foundation.uiaction.UiActions
+import com.example.foundation.views.BaseViewModel
 import com.example.simplemvvw.views.changecolor.ChangeColorFragment
 
 class CurrentColorViewModel(
     private val navigator: Navigator,
     private val uiActions: UiActions,
     private val colorsRepository: ColorsRepository
-):BaseViewModel() {
+): BaseViewModel() {
 
     private val _currentColor = MutableLiveData<NamedColor>()
     val currentColor: LiveData<NamedColor> = _currentColor

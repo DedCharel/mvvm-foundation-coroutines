@@ -7,9 +7,9 @@ import androidx.lifecycle.SavedStateHandle
 import com.example.simplemvvw.R
 import com.example.simplemvvw.model.colors.ColorsRepository
 import com.example.simplemvvw.model.colors.NamedColor
-import com.example.simplemvvw.views.Navigator
-import com.example.simplemvvw.views.UiActions
-import com.example.simplemvvw.views.base.BaseViewModel
+import com.example.foundation.navigatior.Navigator
+import com.example.foundation.uiaction.UiActions
+import com.example.foundation.views.BaseViewModel
 
 class ChangeColorViewModel(
     screen: ChangeColorFragment.Screen,

@@ -1,6 +1,6 @@
 package com.example.simplemvvw.model.colors
 
-import com.example.simplemvvw.model.Repository
+import com.example.foundation.model.Repository
 
 typealias ColorListener = (NamedColor) -> Unit
 /**
@@ -8,7 +8,7 @@ typealias ColorListener = (NamedColor) -> Unit
  *
  * Provides access to the available and current selected color
  */
-interface ColorsRepository:Repository {
+interface ColorsRepository: Repository {
 
     var currentColor: NamedColor
 
