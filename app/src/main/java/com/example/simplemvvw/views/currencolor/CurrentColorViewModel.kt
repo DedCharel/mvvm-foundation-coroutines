@@ -36,13 +36,8 @@ class CurrentColorViewModel(
     // --- example of listening results via model layer
 
     init {
-        //for test
-        viewModelScope.launch {
-            delay(2000)
-       //     _currentColor.postValue(ErrorResult(RuntimeException()))
-            colorsRepository.addListener(colorListener)
-        }
-
+        colorsRepository.addListener(colorListener)
+        load()
     }
 
     override fun onCleared() {
@@ -69,11 +64,10 @@ class CurrentColorViewModel(
     }
 
     fun tryAgain(){
-        viewModelScope.launch {
-            _currentColor.postValue(PendingResult())
-            delay(2000)
-            colorsRepository.addListener(colorListener)
-        }
+        load()
+    }
 
+    private fun load(){
+        colorsRepository.getCurrentColor().into(_currentColor)
     }
 }

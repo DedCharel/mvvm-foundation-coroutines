@@ -1,6 +1,7 @@
 package com.example.simplemvvw.model.colors
 
 import com.example.foundation.model.Repository
+import com.example.foundation.model.tasks.Task
 
 typealias ColorListener = (NamedColor) -> Unit
 /**
@@ -10,17 +11,25 @@ typealias ColorListener = (NamedColor) -> Unit
  */
 interface ColorsRepository: Repository {
 
-    var currentColor: NamedColor
 
     /**
      * Get the list of all available colors that may be chosen by the user.
      */
-    fun getAvailableColors(): List<NamedColor>
+    fun getAvailableColors(): Task<List<NamedColor>>
 
     /**
      * Get the color content by its ID
      */
-    fun getById(id: Long): NamedColor
+    fun getById(id: Long): Task<NamedColor>
+    /**
+     * Get the current selected color
+     */
+    fun getCurrentColor(): Task<NamedColor>
+
+    /**
+     * Set the specified color as current
+     */
+    fun setCurrentColor(color: NamedColor): Task<Unit>
 
     /**
      * Listen for the current color changes.

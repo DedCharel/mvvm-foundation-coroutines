@@ -3,6 +3,7 @@ package com.example.simplemvvw
 import android.app.Application
 import com.example.foundation.BaseApplication
 import com.example.foundation.model.Repository
+import com.example.foundation.model.tasks.SimpleTaskFactory
 import com.example.simplemvvw.model.colors.InMemoryColorsRepository
 
 /**
@@ -10,7 +11,10 @@ import com.example.simplemvvw.model.colors.InMemoryColorsRepository
 */
 class App:Application(), BaseApplication {
 
-    override val repositories: List<Repository> = listOf<Repository>(
-        InMemoryColorsRepository()
+    private val taskFactory = SimpleTaskFactory()
+
+    override val repositories: List<Repository> = listOf(
+        taskFactory,
+        InMemoryColorsRepository(taskFactory)
     )
 }
