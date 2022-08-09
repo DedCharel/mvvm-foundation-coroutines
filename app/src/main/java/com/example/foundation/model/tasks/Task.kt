@@ -1,8 +1,13 @@
 package com.example.foundation.model.tasks
 
 import com.example.foundation.model.FinalResult
+import com.example.foundation.model.tasks.dispatchers.Dispatcher
 
 typealias TaskListener<T> = (FinalResult<T>) -> Unit
+
+class CancelledException(
+    originException: Exception? = null
+): Exception(originException)
 
 interface Task<T> {
 
@@ -11,7 +16,7 @@ interface Task<T> {
     /**
      * Listeners are called in main thread
      */
-    fun enqueue(listener: TaskListener<T>)
+    fun enqueue(dispatcher: Dispatcher, listener: TaskListener<T>)
 
     fun cancel()
 }

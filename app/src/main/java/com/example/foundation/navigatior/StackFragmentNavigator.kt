@@ -45,7 +45,7 @@ class StackFragmentNavigator(
     }
 
     fun notifyScreenUpdates() {
-        val f = activity.supportFragmentManager.findFragmentById(containerId)
+        val f = getCurrentFragment()
 
         if (activity.supportFragmentManager.backStackEntryCount > 0) {
             // more than 1 screen -> show back button in the toolbar
@@ -88,6 +88,13 @@ class StackFragmentNavigator(
         activity.supportFragmentManager.unregisterFragmentLifecycleCallbacks(fragmentCallbacks)
     }
 
+    fun onBackPressed(){
+        val f = getCurrentFragment()
+        if (f is BaseFragment) {
+            f.viewModel.onBackPressed()
+        }
+    }
+
     private fun publishResults(fragment: Fragment) {
         val result = result?.getValue() ?: return
         if (fragment is BaseFragment) {
@@ -103,6 +110,10 @@ class StackFragmentNavigator(
             val result = result?.getValue() ?: return
 
         }
+    }
+
+    private fun getCurrentFragment(): Fragment?{
+        return activity.supportFragmentManager.findFragmentById(containerId)
     }
 
     class Animations(
