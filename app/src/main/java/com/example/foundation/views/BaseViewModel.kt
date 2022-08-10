@@ -39,8 +39,13 @@ open class BaseViewModel(
 
     }
 
-    fun onBackPressed(){
+    /**
+     * Override this method in child classes if you want to control go-back behaviour.
+     * Return `true` if you want to abort closing this screen
+     */
+    open fun onBackPressed(): Boolean {
         clearTasks()
+        return false
     }
 
     fun <T> Task<T>.safeEnqueue(listener:TaskListener<T>? = null){

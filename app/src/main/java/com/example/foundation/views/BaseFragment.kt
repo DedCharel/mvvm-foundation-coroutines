@@ -8,6 +8,7 @@ import com.example.foundation.model.ErrorResult
 import com.example.foundation.model.PendingResult
 import com.example.foundation.model.Result
 import com.example.foundation.model.SuccessResult
+import com.example.foundation.views.activity.ActivityDelegateHolder
 
 /**
  * Base class for all fragments
@@ -23,9 +24,7 @@ abstract class BaseFragment : Fragment() {
      * Call this method when activity controls (e.g. toolbar) should be re-rendered
      */
     fun notifyScreenUpdates() {
-        // if you have more than 1 activity -> you should use a separate interface instead of direct
-        // cast to MainActivity
-        (requireActivity() as FragmentsHolder).notifyScreenUpdates()
+        (requireActivity() as ActivityDelegateHolder).delegate.notifyScreenUpdates()
     }
 
     fun <T> renderResult(root: ViewGroup, result: Result<T>,

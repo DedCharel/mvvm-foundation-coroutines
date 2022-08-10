@@ -7,4 +7,8 @@ import java.io.Serializable
  * Please note that all fields inside the screen should be serializable.
  */
 interface BaseScreen:Serializable {
+
+    companion object {
+        const val ARG_SCREEN = "ARG_SCREEN"
+    }
 }
