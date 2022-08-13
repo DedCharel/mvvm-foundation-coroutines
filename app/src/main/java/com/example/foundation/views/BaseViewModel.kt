@@ -1,15 +1,12 @@
 package com.example.foundation.views
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import com.example.foundation.model.PendingResult
+import androidx.lifecycle.*
+import com.example.foundation.model.ErrorResult
 import com.example.foundation.model.Result
-import com.example.foundation.model.tasks.Task
-import com.example.foundation.model.tasks.TaskListener
-import com.example.foundation.model.tasks.dispatchers.Dispatcher
+import com.example.foundation.model.SuccessResult
 import com.example.foundation.utils.Event
+import kotlinx.coroutines.*
+import kotlin.Exception
 
 typealias LiveEvent<T> = LiveData<Event<T>>
 typealias MutableLiveEvent<T> = MutableLiveData<Event<T>>
@@ -20,15 +17,15 @@ typealias MediatorLiveResult<T> = MediatorLiveData<Result<T>>
 /**
  * Base class for all view-models.
  */
-open class BaseViewModel(
-    private val dispatcher: Dispatcher
-) : ViewModel() {
+open class BaseViewModel() : ViewModel() {
 
-    private val tasks = mutableListOf<Task<*>>()
+    private val coroutineContext = SupervisorJob() + Dispatchers.Main.immediate
+    protected val viewModelScope: CoroutineScope = CoroutineScope(coroutineContext)
+
 
     override fun onCleared() {
         super.onCleared()
-        clearTasks()
+        clearViewModelScope()
     }
 
     /**
@@ -44,27 +41,24 @@ open class BaseViewModel(
      * Return `true` if you want to abort closing this screen
      */
     open fun onBackPressed(): Boolean {
-        clearTasks()
+        clearViewModelScope()
         return false
     }
 
-    fun <T> Task<T>.safeEnqueue(listener:TaskListener<T>? = null){
-        tasks.add(this)
-        this.enqueue(dispatcher) {
-            tasks.remove(this)
-            listener?.invoke(it)
+
+
+    fun <T> into(liveResult: MutableLiveResult<T>, block: suspend () -> T){
+        viewModelScope.launch {
+            try {
+                liveResult.postValue(SuccessResult(block()))
+            } catch (e: Exception){
+                liveResult.postValue(ErrorResult(e))
+            }
         }
+
     }
 
-    fun <T> Task<T>.into(liveResult: MutableLiveResult<T>){
-        liveResult.value = PendingResult()
-        this.safeEnqueue{
-            liveResult.value = it
-        }
-    }
-
-    fun clearTasks(){
-        tasks.forEach { it.cancel() }
-        tasks.clear()
+    private fun clearViewModelScope(){
+        viewModelScope.cancel()
     }
 }

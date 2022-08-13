@@ -1,6 +1,6 @@
 package com.example.foundation.sideeffects.permission
 
-import com.example.foundation.model.tasks.Task
+
 import com.example.foundation.sideeffects.permission.plugin.PermissionStatus
 
 /**
@@ -21,6 +21,6 @@ interface Permissions {
      * Request the specified permission.
      * See [PermissionStatus]
      */
-    fun requestPermission(permission: String): Task<PermissionStatus>
+    suspend fun requestPermission(permission: String): PermissionStatus
 
 }

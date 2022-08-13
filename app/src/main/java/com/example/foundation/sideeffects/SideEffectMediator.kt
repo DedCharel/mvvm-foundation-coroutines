@@ -1,7 +1,7 @@
 package com.example.foundation.sideeffects
 
-import com.example.foundation.model.tasks.dispatchers.Dispatcher
-import com.example.foundation.model.tasks.dispatchers.MainThreadDispatcher
+import com.example.foundation.model.dispatchers.Dispatcher
+import com.example.foundation.model.dispatchers.MainThreadDispatcher
 import com.example.foundation.utils.ResourceActions
 
 /**
