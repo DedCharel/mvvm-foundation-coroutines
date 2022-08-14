@@ -2,7 +2,11 @@ package com.example.simplemvvw.model.colors
 
 import android.graphics.Color
 import com.example.foundation.model.coroutines.IoDispatcher
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 
 /**
@@ -33,21 +37,34 @@ class InMemoryColorsRepository(
        return@withContext currentColor
     }
 
-    override suspend fun setCurrentColor(color: NamedColor) = withContext(ioDispatcher.value){
-        delay(1000)
+    override fun setCurrentColor(color: NamedColor): Flow<Int> = flow {
+
         if (currentColor !=color){
+            var process = 0
+            while (process < 100) {
+                process += 2
+                delay(30)
+                emit(process) //передаем flow текущий progress
+            }
             currentColor = color
             listeners.forEach { it(color) }
+        }else {
+            emit(100)
         }
-    }
+    }.flowOn(ioDispatcher.value)
 
-    override fun addListener(listener: ColorListener) {
-        listeners += listener
-    }
+    override fun listenCurrentColor(): Flow<NamedColor> = callbackFlow {
+        val listener: ColorListener = {
+            trySend(it)  // вместо offer так как он устарел
+        }
+        listeners.add(listener)
 
-    override fun removeListener(listener: ColorListener) {
-        listeners -= listener
-    }
+        awaitClose {
+            // this block is executed upon cancelling/closing, useful for cleanup logic
+            listeners.remove(listener)
+        }
+    }.buffer(Channel.CONFLATED) // Channel.CONFLATED is useful when you need only the most recent values
+
 
     companion object {
         private val AVAILABLE_COLORS = listOf(

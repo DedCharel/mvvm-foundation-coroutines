@@ -12,8 +12,10 @@ import com.example.foundation.views.HasScreenTitle
 import com.example.foundation.views.BaseFragment
 import com.example.foundation.views.BaseScreen
 import com.example.foundation.views.screenViewModel
+import com.example.simplemvvw.views.collectFlow
 import com.example.simplemvvw.views.onTryAgain
 import com.example.simplemvvw.views.renderSimpleResult
+
 
 
 class ChangeColorFragment: BaseFragment(), HasScreenTitle {
@@ -40,7 +42,7 @@ class ChangeColorFragment: BaseFragment(), HasScreenTitle {
         binding.saveButton.setOnClickListener { viewModel.onSavePressed() }
         binding.cancelButton.setOnClickListener { viewModel.onCancelPressed() }
 
-        viewModel.viewState.observe(viewLifecycleOwner) { result ->
+        collectFlow(viewModel.viewState) { result ->
             renderSimpleResult(binding.root, result) { viewState ->
                 adapter.items = viewState.colorList
                 binding.saveButton.visibility = if (viewState.showSaveButton) View.VISIBLE else View.INVISIBLE
@@ -48,6 +50,7 @@ class ChangeColorFragment: BaseFragment(), HasScreenTitle {
                 binding.saveProgressBar.visibility = if (viewState.showSaveProgressBar) View.VISIBLE else View.GONE
             }
         }
+
         viewModel.screenTitle.observe(viewLifecycleOwner) {
             // if screen title is changed -> need to notify activity about updates
             notifyScreenUpdates()

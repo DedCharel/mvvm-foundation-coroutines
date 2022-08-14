@@ -22,6 +22,7 @@ import com.example.foundation.views.LiveResult
 import com.example.foundation.views.MutableLiveResult
 import com.example.simplemvvw.views.changecolor.ChangeColorFragment
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collect
 
 class CurrentColorViewModel(
     private val navigator: Navigator,
@@ -36,46 +37,22 @@ class CurrentColorViewModel(
     private val _currentColor = MutableLiveResult<NamedColor>(PendingResult())
     val currentColor: LiveResult<NamedColor> = _currentColor
 
-    private val colorListener: ColorListener = {
-        _currentColor.postValue(SuccessResult(it))
-    }
+
 
     // --- example of listening results via model layer
 
     init {
-        colorsRepository.addListener(colorListener)
+        viewModelScope.launch {
+            // as listenCurrentColor() returns infinite flow,
+            // collecting is cancelled when view-model is going to be destroyed
+            // (because collect() is executed inside viewModelScope)
+            colorsRepository.listenCurrentColor().collect {
+                _currentColor.postValue(SuccessResult(it))
+            }
+        }
         load()
     }
 
-    override fun onCleared() {
-        super.onCleared()
-        colorsRepository.removeListener(colorListener)
-
-//        viewModelScope.launch {
-//            delay(1000)
-//
-//            val result = withContext(Dispatchers.Default){
-//                val part1 = async {
-//                    delay(1000)
-//                    return@async "Part 1 done"
-//                }
-//                val part2 = async {
-//                    delay(2000)
-//                    return@async "Part 2 done"
-//                }
-//                val part3 = async {
-//                    delay(3000)
-//                    return@async "Part 3 done"
-//                }
-//
-//                val result1 = part1.await()
-//                val result2 = part2.await()
-//                val result3 = part3.await()
-//                return@withContext "$result1\n$result2\n$result3"
-//            }
-//            Log.d("SomeTag", "Result: $result")
-//        }
-    }
 
     // --- example of listening results directly from the screen
 
