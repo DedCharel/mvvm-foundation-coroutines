@@ -1,7 +1,9 @@
 package com.example.simplemvvw.model.colors
 
 import android.graphics.Color
+import android.util.Log
 import com.example.foundation.model.coroutines.IoDispatcher
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.channels.Channel
@@ -20,7 +22,13 @@ class InMemoryColorsRepository(
 
     private var currentColor: NamedColor = AVAILABLE_COLORS[0]
 
-    private val listeners = mutableSetOf<ColorListener>()
+
+
+    private val currentColorFlow = MutableSharedFlow<NamedColor>(
+        replay = 0,
+        extraBufferCapacity = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
 
     override suspend fun getAvailableColors(): List<NamedColor>  = withContext(ioDispatcher.value){
         delay(1000)
@@ -28,7 +36,7 @@ class InMemoryColorsRepository(
     }
 
     override suspend fun getById(id: Long): NamedColor = withContext(ioDispatcher.value) {
-        delay(1000)
+        delay(100)
        return@withContext AVAILABLE_COLORS.first { it.id == id }
     }
 
@@ -47,23 +55,13 @@ class InMemoryColorsRepository(
                 emit(process) //передаем flow текущий progress
             }
             currentColor = color
-            listeners.forEach { it(color) }
+            currentColorFlow.emit(color)
         }else {
             emit(100)
         }
     }.flowOn(ioDispatcher.value)
 
-    override fun listenCurrentColor(): Flow<NamedColor> = callbackFlow {
-        val listener: ColorListener = {
-            trySend(it)  // вместо offer так как он устарел
-        }
-        listeners.add(listener)
-
-        awaitClose {
-            // this block is executed upon cancelling/closing, useful for cleanup logic
-            listeners.remove(listener)
-        }
-    }.buffer(Channel.CONFLATED) // Channel.CONFLATED is useful when you need only the most recent values
+    override fun listenCurrentColor(): Flow<NamedColor> = currentColorFlow
 
 
     companion object {
